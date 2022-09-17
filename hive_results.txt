@@ -1,0 +1,285 @@
+hive> DESCRIBE department_data;
+OK
+dept_id                 int
+dept_name               string
+manager_id              int
+salary                  int
+Time taken: 0.262 seconds, Fetched: 4 row(s)
+hive> DESCRIBE FORMATTED department_data;
+OK
+# col_name              data_type               comment
+
+dept_id                 int
+dept_name               string
+manager_id              int
+salary                  int
+
+# Detailed Table Information
+Database:               hive_class_b1
+Owner:                  cloudera
+CreateTime:             Sat Sep 17 00:19:20 PDT 2022
+LastAccessTime:         UNKNOWN
+Protect Mode:           None
+Retention:              0
+Location:               hdfs://quickstart.cloudera:8020/user/hive/warehouse/hive_class_b1.db/department_data
+Table Type:             MANAGED_TABLE
+Table Parameters:
+        transient_lastDdlTime   1663399160
+
+# Storage Information
+SerDe Library:          org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+InputFormat:            org.apache.hadoop.mapred.TextInputFormat
+OutputFormat:           org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+Compressed:             No
+Num Buckets:            -1
+Bucket Columns:         []
+Sort Columns:           []
+Storage Desc Params:
+        field.delim             ,
+        serialization.format    ,
+Time taken: 0.071 seconds, Fetched: 30 row(s)
+
+hive> LOAD DATA LOCAL INPATH '/home/cloudera/prakash_lfs/depart_data.csv' INTO TABLE department_data;
+Loading data to table hive_class_b1.department_data
+Table hive_class_b1.department_data stats: [numFiles=1, totalSize=681]
+OK
+Time taken: 0.406 seconds
+
+hive> SELECT * FROM hive_class_b1.department_data;
+OK
+10      Administration  200     1700
+20      Marketing       201     1800
+30      Purchasing      114     1700
+40      Human Resources 203     2400
+50      Shipping        121     1500
+60      IT      103     1400
+70      Public Relations        204     2700
+80      Sales   145     2500
+90      Executive       100     1700
+100     Finance 108     1700
+110     Accounting      205     1700
+120     Treasury        NULL    1700
+130     Corporate Tax   NULL    1700
+140     Control And Credit      NULL    1700
+150     Shareholder Services    NULL    1700
+160     Benefits        NULL    1700
+170     Manufacturing   NULL    1700
+180     Construction    NULL    1700
+190     Contracting     NULL    1700
+200     Operations      NULL    1700
+210     IT Support      NULL    1700
+220     NOC     NULL    1700
+230     IT Helpdesk     NULL    1700
+240     Government Sales        NULL    1700
+250     Retail Sales    NULL    1700
+260     Recruiting      NULL    1700
+270     Payroll NULL    1700
+Time taken: 0.253 seconds, Fetched: 27 row(s)
+
+hive> SET hive.cli.print.header=TRUE;
+hive> SELECT * FROM hive_class_b1.department_data;
+OK
+department_data.dept_id department_data.dept_name       department_data.manager_id      department_data.salary
+10      Administration  200     1700
+20      Marketing       201     1800
+30      Purchasing      114     1700
+40      Human Resources 203     2400
+50      Shipping        121     1500
+60      IT      103     1400
+70      Public Relations        204     2700
+80      Sales   145     2500
+90      Executive       100     1700
+100     Finance 108     1700
+110     Accounting      205     1700
+120     Treasury        NULL    1700
+130     Corporate Tax   NULL    1700
+140     Control And Credit      NULL    1700
+150     Shareholder Services    NULL    1700
+160     Benefits        NULL    1700
+170     Manufacturing   NULL    1700
+180     Construction    NULL    1700
+190     Contracting     NULL    1700
+200     Operations      NULL    1700
+210     IT Support      NULL    1700
+220     NOC     NULL    1700
+230     IT Helpdesk     NULL    1700
+240     Government Sales        NULL    1700
+250     Retail Sales    NULL    1700
+260     Recruiting      NULL    1700
+270     Payroll NULL    1700
+Time taken: 0.066 seconds, Fetched: 27 row(s)
+
+[cloudera@quickstart ~]$ hdfs dfs -put /home/cloudera/prakash_lfs/depart_data.csv /prakash_hdfs
+[cloudera@quickstart ~]$ hdfs dfs -ls /prakash_hdfs
+Found 4 items
+-rw-r--r--   1 cloudera supergroup        681 2022-09-17 01:05 /prakash_hdfs/depart_data.csv
+-rw-r--r--   1 cloudera supergroup          0 2022-09-03 01:43 /prakash_hdfs/file1.txt
+-rw-r--r--   1 cloudera supergroup         28 2022-09-03 01:47 /prakash_hdfs/test.txt
+-rw-r--r--   1 root     supergroup          0 2022-09-03 01:35 /prakash_hdfs/text1.txt
+
+hive> LOAD DATA INPATH '/prakash_hdfs/depart_data.csv' into table department_data_from_hdfs;
+Loading data to table hive_class_b1.department_data_from_hdfs
+Table hive_class_b1.department_data_from_hdfs stats: [numFiles=1, totalSize=681]
+OK
+Time taken: 0.18 seconds
+
+hive> select * from department_data_from_hdfs;
+OK
+department_data_from_hdfs.dept_id       department_data_from_hdfs.dept_name     department_data_from_hdfs.manager_id    department_data_from_hdfs.salary
+10      Administration  200     1700
+20      Marketing       201     1800
+30      Purchasing      114     1700
+40      Human Resources 203     2400
+50      Shipping        121     1500
+60      IT      103     1400
+70      Public Relations        204     2700
+80      Sales   145     2500
+90      Executive       100     1700
+100     Finance 108     1700
+110     Accounting      205     1700
+120     Treasury        NULL    1700
+130     Corporate Tax   NULL    1700
+140     Control And Credit      NULL    1700
+150     Shareholder Services    NULL    1700
+160     Benefits        NULL    1700
+170     Manufacturing   NULL    1700
+180     Construction    NULL    1700
+190     Contracting     NULL    1700
+200     Operations      NULL    1700
+210     IT Support      NULL    1700
+220     NOC     NULL    1700
+230     IT Helpdesk     NULL    1700
+240     Government Sales        NULL    1700
+250     Retail Sales    NULL    1700
+260     Recruiting      NULL    1700
+270     Payroll NULL    1700
+Time taken: 0.068 seconds, Fetched: 27 row(s)
+
+--After loading from hdfs to hdfs. Source hdfs file gets moved to target hdfs path.
+--Internal tables moved data from source hdfs path to target warehouse dir. Can't use the same soruce path again for any other tables.
+
+[cloudera@quickstart ~]$ hdfs dfs -ls /prakash_hdfs   
+Found 3 items
+-rw-r--r--   1 cloudera supergroup          0 2022-09-03 01:43 /prakash_hdfs/file1.txt
+-rw-r--r--   1 cloudera supergroup         28 2022-09-03 01:47 /prakash_hdfs/test.txt
+-rw-r--r--   1 root     supergroup          0 2022-09-03 01:35 /prakash_hdfs/text1.txt
+
+
+hive> show create table department_data_external;
+OK
+createtab_stmt
+CREATE EXTERNAL TABLE `department_data_external`(
+  `dept_id` int,
+  `dept_name` string,
+  `manager_id` int,
+  `salary` int)
+ROW FORMAT SERDE
+  'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
+WITH SERDEPROPERTIES (
+  'field.delim'=',',
+  'serialization.format'=',')
+STORED AS INPUTFORMAT
+  'org.apache.hadoop.mapred.TextInputFormat'
+OUTPUTFORMAT
+  'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+LOCATION
+  'hdfs://quickstart.cloudera:8020/prakash_hdfs1'
+TBLPROPERTIES (
+  'COLUMN_STATS_ACCURATE'='false',
+  'numFiles'='1',
+  'numRows'='-1',
+  'rawDataSize'='-1',
+  'totalSize'='681',
+  'transient_lastDdlTime'='1663426222')
+Time taken: 0.094 seconds, Fetched: 23 row(s)
+
+hive> show create table department_data_from_hdfs;
+OK
+createtab_stmt
+CREATE TABLE `department_data_from_hdfs`(
+  `dept_id` int,
+  `dept_name` string,
+  `manager_id` int,
+  `salary` int)
+ROW FORMAT SERDE
+  'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
+WITH SERDEPROPERTIES (
+  'field.delim'=',',
+  'serialization.format'=',')
+STORED AS INPUTFORMAT
+  'org.apache.hadoop.mapred.TextInputFormat'
+OUTPUTFORMAT
+  'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+LOCATION
+  'hdfs://quickstart.cloudera:8020/user/hive/warehouse/hive_class_b1.db/department_data_from_hdfs'
+TBLPROPERTIES (
+  'COLUMN_STATS_ACCURATE'='true',
+  'numFiles'='1',
+  'totalSize'='681',
+  'transient_lastDdlTime'='1663403994')
+Time taken: 0.04 seconds, Fetched: 21 row(s)
+
+
+hive> select * from hive_class_b1.employee_array;
+OK
+employee_array.id       employee_array.name     employee_array.skills
+101     Amit    ["HADOOP","HIVE","SPARK","BIG-DATA"]
+102     Sumit   ["HIVE","OZZIE","HADOOP","SPARK","STORM"]
+103     Rohit   ["KAFKA","CASSANDRA","HBASE"]
+Time taken: 0.055 seconds, Fetched: 3 row(s)
+
+hive> SELECT
+    >    id
+    >  , name
+    >  , skills[0] AS prime_skill
+    > FROM hive_class_b1.employee_array;
+Query ID = cloudera_20220917111616_776dc84e-b72a-4b30-a2a9-70dde1529d99
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1663438212843_0004, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1663438212843_0004/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1663438212843_0004
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2022-09-17 11:16:57,140 Stage-1 map = 0%,  reduce = 0%
+2022-09-17 11:17:01,375 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.28 sec
+MapReduce Total cumulative CPU time: 1 seconds 280 msec
+Ended Job = job_1663438212843_0004
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1   Cumulative CPU: 1.28 sec   HDFS Read: 4448 HDFS Write: 47 SUCCESS
+Total MapReduce CPU Time Spent: 1 seconds 280 msec
+OK
+id      name    prime_skill
+101     Amit    HADOOP
+102     Sumit   HIVE
+103     Rohit   KAFKA
+Time taken: 12.663 seconds, Fetched: 3 row(s)
+
+hive> SELECT
+    >    id
+    >  , name
+    >  , SIZE(skills)                    AS size_of_each_array                                                                                               
+    >  , ARRAY_CONTAINS(skills,"HADOOP") AS knows_hadoop
+    >  , SORT_ARRAY(skills)              AS sorted_array                                                                                                     
+    > FROM hive_class_b1.employee_array;
+Query ID = cloudera_20220917111717_79c32523-75d5-4648-896f-9940a2788dc1
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1663438212843_0005, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1663438212843_0005/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1663438212843_0005
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2022-09-17 11:17:22,997 Stage-1 map = 0%,  reduce = 0%
+2022-09-17 11:17:28,234 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.24 sec
+MapReduce Total cumulative CPU time: 1 seconds 240 msec
+Ended Job = job_1663438212843_0005
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1   Cumulative CPU: 1.24 sec   HDFS Read: 4917 HDFS Write: 130 SUCCESS
+Total MapReduce CPU Time Spent: 1 seconds 240 msec
+OK
+id      name    size_of_each_array      knows_hadoop    sorted_array
+101     Amit    4       true    ["BIG-DATA","HADOOP","HIVE","SPARK"]
+102     Sumit   5       true    ["HADOOP","HIVE","OZZIE","SPARK","STORM"]
+103     Rohit   3       false   ["CASSANDRA","HBASE","KAFKA"]
+Time taken: 12.597 seconds, Fetched: 3 row(s)
+
+
